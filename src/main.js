@@ -106,14 +106,15 @@ const sphere = new THREE.Mesh(
 /**
  * Cubes grid
  */
-const geometry = new RoundedBoxGeometry(1, 1, 1, 8, 0.025);
-const material = new THREE.MeshStandardMaterial({
-  metalness: 0.9,
-  roughness: 0.2,
-});
-const getBox = (w, h, d) => {
+const getBox = (size) => {
+  const geometry = new RoundedBoxGeometry(1, 1, 1, 8, 0.025);
+  const material = new THREE.MeshStandardMaterial({
+    metalness: 0.9,
+    roughness: 0.2,
+  });
   const meshBox = new THREE.Mesh(geometry, material);
   meshBox.castShadow = true;
+  meshBox.scale.set(1, 1, 1);
   return meshBox;
 };
 
@@ -202,6 +203,53 @@ scene.add(spotLight);
 // gui.add(spotLight.position, "y", 0, 20);
 // gui.add(spotLight.position, "z", 0, 20);
 // gui.add(spotLight, "penumbra", 0, 1);
+
+/**
+ * Events
+ */
+let hoveredCube = null;
+const originalScale = new THREE.Vector3();
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener("pointermove", (event) => {
+  mouse.x = (event.clientX / sizes.width) * 2 - 1;
+  mouse.y = -(event.clientY / sizes.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersections = raycaster.intersectObjects(boxGrid.children);
+
+  if (intersections.length > 0) {
+    // Get the closest intersected cube
+    const cube = intersections[0].object;
+
+    if (cube !== hoveredCube) {
+      // Restore the scale of the previously hovered cube
+      if (hoveredCube) {
+        hoveredCube.scale.set(1, 1, 1); // Restore the original scale
+      }
+
+      // Store the original scale of the newly hovered cube
+      cube.getWorldScale(originalScale);
+
+      // Scale the newly hovered cube
+      cube.scale.set(
+        originalScale.x * 1.1,
+        originalScale.y * 2,
+        originalScale.z * 1.1
+      ); // Increase scale by 20%
+
+      // Update the currently hovered cube
+      hoveredCube = cube;
+    }
+  } else {
+    // Restore the scale of the previously hovered cube (if any)
+    if (hoveredCube) {
+      hoveredCube.scale.copy(originalScale);
+      hoveredCube = null;
+    }
+  }
+});
 
 /**
  * Helpers
