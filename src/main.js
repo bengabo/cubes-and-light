@@ -49,10 +49,10 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1000
 );
-camera.position.x = -10;
-camera.position.y = 3;
+camera.position.x = -16;
+camera.position.y = 2;
 camera.position.z = 5;
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+// camera.lookAt(new THREE.Vector3(0, 0, 0));
 scene.add(camera);
 
 window.addEventListener("resize", () => {
@@ -106,10 +106,10 @@ const sphere = new THREE.Mesh(
 /**
  * Cubes grid
  */
-const geometry = new RoundedBoxGeometry(1, 1, 1, 8, 0.1);
+const geometry = new RoundedBoxGeometry(1, 1, 1, 8, 0.025);
 const material = new THREE.MeshStandardMaterial({
-  metalness: 0.7,
-  roughness: 0.05,
+  metalness: 0.9,
+  roughness: 0.2,
 });
 const getBox = (w, h, d) => {
   const meshBox = new THREE.Mesh(geometry, material);
@@ -197,11 +197,11 @@ const ambientLight = new THREE.AmbientLight(0xfff5be, 0.1);
 scene.add(spotLight);
 
 // Gui
-gui.add(spotLight, "intensity", 0, 10);
-gui.add(spotLight.position, "x", 0, 20);
-gui.add(spotLight.position, "y", 0, 20);
-gui.add(spotLight.position, "z", 0, 20);
-gui.add(spotLight, "penumbra", 0, 1);
+// gui.add(spotLight, "intensity", 0, 10);
+// gui.add(spotLight.position, "x", 0, 20);
+// gui.add(spotLight.position, "y", 0, 20);
+// gui.add(spotLight.position, "z", 0, 20);
+// gui.add(spotLight, "penumbra", 0, 1);
 
 /**
  * Helpers
@@ -215,6 +215,8 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.minDistance = 15;
 controls.maxDistance = 25;
+controls.minPolarAngle = Math.PI / 10;
+controls.maxPolarAngle = Math.PI / 2.1;
 
 /**
  * Renderer
